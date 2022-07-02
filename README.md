@@ -12,6 +12,34 @@ go get -u github.com/louisbarrett/gpt3
 
 ```
 gpt3 -i 10 -p "generate golang code to run parallel commands" -o output.txt
+
+
+
+func main() {
+    cmd1 := exec.Command("echo", "Hello World")
+    cmd2 := exec.Command("echo", "Goodbye World")
+
+    err := cmd1.Start()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    err := cmd2.Start()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    log.Printf("Waiting for commands to finish...")
+    err = cmd1.Wait()
+    log.Printf("Command 1 finished with error: %v", err)
+
+    err = cmd2.Wait()
+    log.Printf("Command 2 finished with error: %v", err)
+
+    log.Printf("All commands finished.")
+}
+
+//QED%
 ```
 
 This will generate code that runs parallel commands. The cli will submit appended prompts 10 times. The output will be saved to `output.txt`.
