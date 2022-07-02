@@ -14,11 +14,9 @@ go install com/louisbarrett/gpt3@latest
 
 ## Usage
 
-```
-gpt3 -i 10 -p "generate golang code to run parallel commands" -o output.txt
+`gpt3 -i 10 -p "generate golang code to run parallel commands" -o output.txt`
 
-
-
+```go
 func main() {
     cmd1 := exec.Command("echo", "Hello World")
     cmd2 := exec.Command("echo", "Goodbye World")
