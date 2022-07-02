@@ -1,4 +1,4 @@
-module gpt3
+module github.com/louisbarrett/gpt3
 
 go 1.15
 
