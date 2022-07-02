@@ -6,6 +6,10 @@ A tool for generating code from a prompt.
 
 ```
 go get -u github.com/louisbarrett/gpt3
+
+OR 
+
+go install com/louisbarrett/gpt3@latest
 ```
 
 ## Usage
