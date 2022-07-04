@@ -5,6 +5,8 @@ A tool for generating code from a prompt.
 ## Installation
 
 ```
+export OPEN_AI_APIKEY=<api key>
+
 go get -u github.com/louisbarrett/gpt3
 
 OR 
