@@ -20,6 +20,7 @@ var (
 	flagIterations     = flag.Int("i", 1, "number of iterations to allow for content gen")
 	flagOutputfileName = flag.String("o", "", "Output file name")
 	flagStdIn          = flag.Bool("s", false, "Use stdin as input")
+	flagCombine        = flag.Bool("c", false, "Combine stdin and input prompt into one, stdin will be below the input prompt")
 	prompt             string
 	err                error
 	stdinData          = ""
@@ -41,6 +42,10 @@ func init() {
 	if prompt == "" && stdinData == "" {
 		log.Fatal("Please provide a prompt")
 		flag.Usage()
+	}
+
+	if *flagCombine {
+		prompt = *flagUserInput + "\n:" + stdinData
 	}
 
 	// prompt = fmt.Sprintf("%s", *flagUserInput)
