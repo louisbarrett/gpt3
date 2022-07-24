@@ -71,11 +71,14 @@ func writeOutput(data string) {
 func getPipedData() (pipedData string, err error) {
 	reader := bufio.NewReader(os.Stdin)
 
-	pipedData, err = reader.ReadString('\n')
-	if err != nil {
-		return "", err
-
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			break
+		}
+		pipedData += line
 	}
+
 	return pipedData, err
 }
 
