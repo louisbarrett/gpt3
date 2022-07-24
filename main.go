@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -14,20 +15,42 @@ import (
 
 var (
 	apiKey             = os.Getenv("OPEN_AI_APIKEY")
-	flagUserInput      = flag.String("p", "generate golang code to run paralell commands", "prompt to send to gpt3 such as generate <lang> code to <something>")
+	flagUserInput      = flag.String("p", "", "prompt to send to gpt3 such as generate <lang> code to <something>")
 	flagPromptSuffix   = flag.String("e", "and end the content with //QED.", "suffix to append to the prompt")
 	flagIterations     = flag.Int("i", 1, "number of iterations to allow for content gen")
 	flagOutputfileName = flag.String("o", "", "Output file name")
-
-	prompt string
+	flagStdIn          = flag.Bool("s", false, "Use stdin as input")
+	prompt             string
+	err                error
+	stdinData          = ""
 )
 
 func init() {
 	flag.Parse()
-	prompt = fmt.Sprintf("%s %s", *flagUserInput, *flagPromptSuffix)
+	if *flagStdIn {
+		stdinData, err = getPipedData()
+		if err != nil {
+			log.Println(err)
+		}
+		prompt = stdinData
+
+	} else {
+		prompt = *flagUserInput
+	}
+
+	if prompt == "" && stdinData == "" {
+		log.Fatal("Please provide a prompt")
+		flag.Usage()
+	}
+
+	// prompt = fmt.Sprintf("%s", *flagUserInput)
+
+	if *flagPromptSuffix != "" {
+		prompt = fmt.Sprintf("%s %s", prompt, *flagPromptSuffix)
+	}
+
 	if apiKey == "" {
-		fmt.Println("Please set API key via OPEN_AI_APIKEY variable")
-		os.Exit(1)
+		log.Fatal("Please set API key via OPEN_AI_APIKEY variable")
 	}
 
 }
@@ -40,7 +63,19 @@ func writeOutput(data string) {
 	ioutil.WriteFile(*flagOutputfileName, []byte(data), 0755)
 }
 
+func getPipedData() (pipedData string, err error) {
+	reader := bufio.NewReader(os.Stdin)
+
+	pipedData, err = reader.ReadString('\n')
+	if err != nil {
+		return "", err
+
+	}
+	return pipedData, err
+}
+
 func main() {
+
 	iterations := *flagIterations
 	inputPrompt := prompt
 	var newContent string
