@@ -51,6 +51,8 @@ This will generate code that runs parallel commands. The cli will submit appende
 ## Options
 
 ```
+Usage of gpt3:
+  -c    Combine stdin and input prompt into one, stdin will be below the input prompt
   -e string
         suffix to append to the prompt (default "and end the content with //QED.")
   -i int
@@ -58,5 +60,6 @@ This will generate code that runs parallel commands. The cli will submit appende
   -o string
         Output file name
   -p string
-        prompt to send to gpt3 such as generate <lang> code to <something> (default "generate golang code to run paralell commands")
+        prompt to send to gpt3 such as generate <lang> code to <something>
+  -s    Use stdin as input
 ```
