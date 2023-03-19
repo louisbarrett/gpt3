@@ -14,24 +14,26 @@ import (
 )
 
 var (
-	apiKey             = os.Getenv("OPEN_AI_APIKEY")
-	flagStdIn          = flag.Bool("s", false, "Use stdin as input")
-	flagCombine        = flag.Bool("c", false, "Combine stdin and input prompt into one, stdin will be below the input prompt")
-	flagIterations     = flag.Int("i", 1, "number of iterations to allow for content gen")
-	flagUserInput      = flag.String("p", "", "prompt to send to gpt3 such as generate <lang> code to <something>")
-	flagPromptSuffix   = flag.String("e", "", "suffix to append to the prompt")
-	flagInputfileName  = flag.String("f", "", "input file to read from")
-	flagOutputfileName = flag.String("o", "", "Output file name")
-	prompt             string
-	err                error
-	stdinData          = ""
+	apiKey                       = os.Getenv("OPEN_AI_APIKEY")
+	flagStdIn                    = flag.Bool("s", false, "Use stdin as input")
+	flagCombine                  = flag.Bool("c", false, "Combine stdin and input prompt into one, stdin will be below the input prompt")
+	flagStripInputPromptFromFile = flag.Bool("strip", true, "Strip the input prompt from the input file")
+	flagIterations               = flag.Int("i", 1, "number of iterations to allow for content gen")
+	flagUserInput                = flag.String("p", "", "prompt to send to gpt3 such as generate <lang> code to <something>")
+	flagPromptSuffix             = flag.String("e", "", "suffix to append to the prompt")
+	flagInputfileName            = flag.String("f", "", "input file to read from")
+	flagOutputfileName           = flag.String("o", "", "Output file name")
+
+	prompt         string
+	promptFromFile string
+	err            error
+	stdinData      = ""
 )
 
 func init() {
 	// Parse the flags
 	flag.Parse()
 	// If the user input is not empty, use that as the prompt
-	var promptFromFile string
 	if *flagUserInput != "" {
 		prompt = *flagUserInput
 	}
@@ -105,6 +107,9 @@ func writeOutput(data string) {
 	// Clean up the prompt that is returned by the API
 	data = strings.Replace(data, *flagUserInput, "", -1)
 	data = strings.Replace(data, *flagPromptSuffix, "", -1)
+	if *flagStripInputPromptFromFile {
+		data = strings.Replace(data, promptFromFile, "", -1)
+	}
 	// Write the generated code to a file
 	ioutil.WriteFile(*flagOutputfileName, []byte(data), 0755)
 }
